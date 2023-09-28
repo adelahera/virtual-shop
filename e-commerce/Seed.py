@@ -7,13 +7,11 @@ from typing import Any
 import requests
 import os
 
-		
-# https://requests.readthedocs.io/en/latest/
-def getProductos(api):
-	response = requests.get(api)
-	return response.json()
+# Directorio para las imágenes
+directorio_imgs = "/e-commerce/imagenes"
 
-def getCompras(api):
+# https://requests.readthedocs.io/en/latest/
+def getFromApi(api):
 	response = requests.get(api)
 	return response.json()
 
@@ -24,19 +22,22 @@ def limpiarBD():
 
 # descargar imagenes a partir de una url 
 def downloadImage(url, filename):
-	#comprueba que filename no existe
+	# comprueba si la imagen esta ya descargada
 	if os.path.exists(filename):
-		print("El fichero ya existe")
+		print("Imagen ya descargada")
 		return 
+	
+	# crea el directorio imagenes si no existe
+	os.makedirs(os.path.dirname(filename), exist_ok=True)
+
 	response = requests.get(url)
 	if response.status_code == 200:
 		with open(filename, 'wb') as f:
 			f.write(response.content)
 
-# Esquema de la BD
-# https://docs.pydantic.dev/latest/
-# con anotaciones de tipo https://docs.python.org/3/library/typing.html
-# https://docs.pydantic.dev/latest/usage/fields/
+class Ticket(BaseModel):
+	_id: Any
+	quantity: int = Field(ge=1)
 
 class Nota(BaseModel):
 	rate: float = Field(ge=0., lt=5.)
@@ -53,48 +54,58 @@ class Producto(BaseModel):
 
 class Compra(BaseModel):
 	_id: Any
-	usuario: EmailStr
+	user: EmailStr
 	date: datetime
-	productos: list	
+	products: list[Ticket]
 
 # Conexión a la BD	
 client = MongoClient('mongo', 27017)
 
-# Directorio para las imágenes
-directorio_imgs = "/e-commerce/imagenes"
-
 # Base de Datos
 tienda_db = client.tienda                	
-productos = getProductos('https://fakestoreapi.com/products')
-compras = getCompras('https://fakestoreapi.com/carts')
+productos = getFromApi('https://fakestoreapi.com/products')
+compras = getFromApi('https://fakestoreapi.com/carts')
+usuarios = getFromApi('https://fakestoreapi.com/users')
 
-productos_collection = tienda_db.productos  # Colección
-compras_collection = tienda_db.compras  # Colección
-	
-limpiarBD()
-
+# Elimina el id del producto y de la compra en el json
 for prod in productos:
 	prod.pop('id')
 
-for comp in compras:
-	comp.pop('id')
+productos_collection = tienda_db.productos  # Colección
+compras_collection = tienda_db.compras  # Colección
 
+limpiarBD()
+
+productos_collection.insert_many(productos)
+
+lista_ids_productos = []
+for prod in productos_collection.find():
+	lista_ids_productos.append(prod.get('_id'))
+
+for c in compras:
+	email_usuario = usuarios[c.get('userId') - 1].get('email')
+	c['email'] = email_usuario
+	c.pop('userId')
+	c.pop('id')
+	for p in c.get('products'):
+		p['_id'] = lista_ids_productos[p.get('productId') - 1]
+		p.pop('productId')
 
 # Insertar todos los productos y compras
-productos_collection.insert_many(productos)
 compras_collection.insert_many(compras)
 
 # Descargar las imagenes de los productos en la carpeta imagenes
 for prod in productos_collection.find():
 	url = prod.get('image')
-	ruta_archivo = directorio_imgs + "/" + str(url)
+	nombre_imagen = url.replace('https://fakestoreapi.com/img/','')
+	ruta_archivo = directorio_imgs + '/' + nombre_imagen
 	if url is not None:
 		downloadImage(url, ruta_archivo)	
 
 # Consultas a la base de datos
 # Electrónica entre 100 y 200€, ordenados por precio
-for prod in productos_collection.find({"category":"electronics", "price": {"$gt": 100, "$lt": 200}}).sort("price"):
-	pprint(prod)
+# for prod in productos_collection.find({"category":"electronics", "price": {"$gt": 100, "$lt": 200}}).sort("price"):
+# 	pprint(prod)
 
 # # Productos que contengan la palabra 'pocket' en la descripción
 # for prod in productos_collection.find({"description": {"$regex": ".*pocket.*"}}):
@@ -108,15 +119,14 @@ for prod in productos_collection.find({"category":"electronics", "price": {"$gt"
 # for prod in productos_collection.find({"category":"men's clothing"}).sort("rating.rate"):
 # 	pprint(prod)
 
-# Facturación total de la tienda
-# total = 0
-# for comp in compras_collection.find():
-#     productos = comp.get('productos')
-#     if productos is not None and isinstance(productos, list):
-#         for prod in productos:
-#             total += prod.get('price')
+# Facturación total teniendo en cuenta la cantidad de productos comprados
+total = 0
+for compra in compras_collection.find():
+	for prod in compra.get('products'):
+		producto = productos_collection.find_one({"_id": prod.get('_id')})
+		total += producto.get('price') * prod.get('quantity')
 
-# print("Facturación total: " + str(total) + "€")
+print("Facturación total: " + str(total) + "€")
 
 # Facturación por categoría de producto
 # categorias = []
