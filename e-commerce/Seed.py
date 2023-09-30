@@ -1,11 +1,12 @@
 # Seed.py
-from pydantic import BaseModel, FilePath, Field, EmailStr
+from pydantic import BaseModel, FilePath, Field, EmailStr, field_validator
 from pymongo import MongoClient
 from pprint import pprint
 from datetime import datetime
 from typing import Any
 import requests
 import os
+import queries
 
 # Directorio para las imágenes
 directorio_imgs = "/e-commerce/imagenes"
@@ -16,7 +17,7 @@ def getFromApi(api):
 	return response.json()
 
 # limpia la base de datos
-def limpiarBD():
+def cleanDB():
 	productos_collection.delete_many({})
 	compras_collection.delete_many({})
 
@@ -52,6 +53,13 @@ class Producto(BaseModel):
 	image: FilePath | None
 	rating: Nota
 
+	# Incluye validación para el nombre que debe empezar por mayúscula
+	@field_validator('name')
+	def validate_name(cls, value):
+		if not value[0].isupper():
+			raise ValueError('El nombre debe empezar por mayúscula')
+		return value
+
 class Compra(BaseModel):
 	_id: Any
 	user: EmailStr
@@ -67,21 +75,25 @@ productos = getFromApi('https://fakestoreapi.com/products')
 compras = getFromApi('https://fakestoreapi.com/carts')
 usuarios = getFromApi('https://fakestoreapi.com/users')
 
-# Elimina el id del producto y de la compra en el json
+# Elimina el id del producto en el json
 for prod in productos:
 	prod.pop('id')
 
 productos_collection = tienda_db.productos  # Colección
 compras_collection = tienda_db.compras  # Colección
 
-limpiarBD()
+# Limpia la base de datos para evitar duplicados
+cleanDB()
 
+# Insertar todos los productos
 productos_collection.insert_many(productos)
 
+# Guardar los ids de los productos en una lista
 lista_ids_productos = []
 for prod in productos_collection.find():
 	lista_ids_productos.append(prod.get('_id'))
 
+# Añadir el email del usuario y eliminar los ids de usuario y compra
 for c in compras:
 	email_usuario = usuarios[c.get('userId') - 1].get('email')
 	c['email'] = email_usuario
@@ -102,33 +114,5 @@ for prod in productos_collection.find():
 	if url is not None:
 		downloadImage(url, ruta_archivo)	
 
-# Consultas a la base de datos
-# Electrónica entre 100 y 200€, ordenados por precio
-# for prod in productos_collection.find({"category":"electronics", "price": {"$gt": 100, "$lt": 200}}).sort("price"):
-# 	pprint(prod)
-
-# # Productos que contengan la palabra 'pocket' en la descripción
-# for prod in productos_collection.find({"description": {"$regex": ".*pocket.*"}}):
-# 	pprint(prod)
-
-# # Productos con puntuación mayor de 4
-# for prod in productos_collection.find({"rating.rate": {"$gt": 4}}):
-# 	pprint(prod)
-
-# # Productos de categoria men's clothing, ordenada por puntuación
-# for prod in productos_collection.find({"category":"men's clothing"}).sort("rating.rate"):
-# 	pprint(prod)
-
-# Facturación total teniendo en cuenta la cantidad de productos comprados
-total = 0
-for compra in compras_collection.find():
-	for prod in compra.get('products'):
-		producto = productos_collection.find_one({"_id": prod.get('_id')})
-		total += producto.get('price') * prod.get('quantity')
-
-print("Facturación total: " + str(total) + "€")
-
-# Facturación por categoría de producto
-# categorias = []
-# for prod in productos_collection.find():
-# 	categorias.append(prod.get('category'))
+if __name__ == "__main__":
+    queries.realizar_consultas()
