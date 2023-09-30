@@ -1,0 +1,4 @@
+Total revenue of electronics: 1994.99€
+Total revenue of jewelery: 883.98€
+Total revenue of men's clothing: 204.23000000000002€
+Total revenue of women's clothing: 157.72€
