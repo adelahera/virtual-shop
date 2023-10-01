@@ -1,4 +1,20 @@
-Total revenue of electronics: 1994.99€
-Total revenue of jewelery: 883.98€
-Total revenue of men's clothing: 204.23000000000002€
-Total revenue of women's clothing: 157.72€
+{'category': "men's clothing", 'revenue': 2199.0}
+{'category': "men's clothing", 'revenue': 111.5}
+{'category': "men's clothing", 'revenue': 335.94}
+{'category': "men's clothing", 'revenue': 0}
+{'category': 'jewelery', 'revenue': 1390}
+{'category': 'jewelery', 'revenue': 0}
+{'category': 'jewelery', 'revenue': 9.99}
+{'category': 'jewelery', 'revenue': 10.99}
+{'category': 'electronics', 'revenue': 64}
+{'category': 'electronics', 'revenue': 218}
+{'category': 'electronics', 'revenue': 0}
+{'category': 'electronics', 'revenue': 342}
+{'category': 'electronics', 'revenue': 0}
+{'category': 'electronics', 'revenue': 0}
+{'category': "women's clothing", 'revenue': 0}
+{'category': "women's clothing", 'revenue': 0}
+{'category': "women's clothing", 'revenue': 0}
+{'category': "women's clothing", 'revenue': 9.85}
+{'category': "women's clothing", 'revenue': 0}
+{'category': "women's clothing", 'revenue': 0}
