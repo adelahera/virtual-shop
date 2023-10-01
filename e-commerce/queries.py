@@ -59,15 +59,17 @@ def realizar_consultas():
         with open(os.path.join("salida_consultas", "total_revenue.txt"), 'w') as file:
             file.write("Total revenue: " + str(total) + "€\n")
 
-    # Facturación por categoría    
+    # Facturacion total por cada categoria, mostrando la categoria y la facturacion
     def revenue_by_category():
-        categories = productos_collection.distinct("category")
-        with open(os.path.join("salida_consultas", "revenue_by_category.txt"), 'w') as file:
-            for cat in categories:
-                total = 0
-                for prod in productos_collection.find({"category": cat}):
-                    total += prod.get('price')
-                file.write("Total revenue of " + cat + ": " + str(total) + "€\n")
+        results = []
+        for prod in productos_collection.find():
+            total = 0
+            for compra in compras_collection.find():
+                for prod_compra in compra.get('products'):
+                    if prod_compra.get('_id') == prod.get('_id'):
+                        total += prod.get('price') * prod_compra.get('quantity')
+            results.append({"category": prod.get('category'), "revenue": total})
+        save_results_to_file("revenue_by_category.txt", results)
 
     electronics_between_100_and_200()
     products_containing_word_pocket()
