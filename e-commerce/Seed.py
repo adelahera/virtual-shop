@@ -1,4 +1,3 @@
-# Seed.py
 from pydantic import BaseModel, FilePath, Field, EmailStr, field_validator
 from pymongo import MongoClient
 from pprint import pprint
