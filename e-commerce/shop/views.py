@@ -1,5 +1,7 @@
 from django.http import HttpResponse
 from . import consultas
+from django.shortcuts import render
+from pymongo import MongoClient
 
 def index(request):
     html = "<h1>¡Bienvenido a la tienda!</h1>" \
@@ -14,20 +16,25 @@ def index(request):
     return HttpResponse(html)
 
 def consulta_1(request):
-    resultados = consultas.electronics_between_100_and_200()
-    return render(request, "shop/products_list.html", {"resultados": consulta1})
+    consulta = consultas.electronics_between_100_and_200()
+    return render(request, "shop/products_list.html", {"consulta":consulta})
 
 def consulta_2(request):
-    return HttpResponse("Consulta 2")
+    consulta = consultas.products_containing_word_pocket()
+    return render(request, "shop/products_list.html", {"consulta":consulta})
 
 def consulta_3(request):
-    return HttpResponse("Consulta 3")
+    consulta = consultas.products_with_rating_above_4()
+    return render(request, "shop/products_list.html", {"consulta":consulta})
 
 def consulta_4(request):
-    return HttpResponse("Consulta 4")
+    consulta = consultas.mens_clothing_sorted_by_rating()
+    return render(request, "shop/products_list.html", {"consulta":consulta})
 
 def consulta_5(request):
-    return HttpResponse("Consulta 5")
+    consulta = consultas.total_revenue()
+    return HttpResponse(consulta)
 
 def consulta_6(request):
-    return HttpResponse("Consulta 6")
+    consulta = consultas.revenue_by_category()
+    return HttpResponse(consulta)

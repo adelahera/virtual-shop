@@ -4,23 +4,12 @@
     <title>Consultas</title>
 </head>
 <body>
-    <h1>Todas las Consultas</h1>
-
-    <h2>Consulta 1</h2>
+    <h2>Consulta</h2>
     <ul>
-        {% for resultado in consulta1 %}
-            <li>{{ resultado }}</li>
+        {% for resultado in consulta %}
+            <li>{{ resultado.title}} -> {{resultado.price}}€</li>
         {% endfor %}
     </ul>
-
-    <h2>Consulta 2</h2>
-    <ul>
-        {% for resultado in consulta2 %}
-            <li>{{ resultado }}</li>
-        {% endfor %}
-    </ul>
-
-    <!-- Agrega más secciones para otras consultas según sea necesario -->
 
 </body>
 </html>
