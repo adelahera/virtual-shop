@@ -4,16 +4,7 @@ from django.shortcuts import render
 from pymongo import MongoClient
 
 def index(request):
-    html = "<h1>¡Bienvenido a la tienda!</h1>" \
-           "<ul>" \
-           "<li><a href='consulta1/'>Consulta 1</a></li>" \
-           "<li><a href='consulta2/'>Consulta 2</a></li>" \
-           "<li><a href='consulta3/'>Consulta 3</a></li>" \
-           "<li><a href='consulta4/'>Consulta 4</a></li>" \
-           "<li><a href='consulta5/'>Consulta 5</a></li>" \
-           "<li><a href='consulta6/'>Consulta 6</a></li>" \
-           "</ul>"
-    return HttpResponse(html)
+    return render(request, "shop/index.html")
 
 def consulta_1(request):
     consulta = consultas.electronics_between_100_and_200()
