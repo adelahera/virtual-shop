@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>
+        
+        {% for busqueda in busqueda %}
+            <li>{{ busqueda.title}} -> {{busqueda.price}}€</li>            
+        {% endfor %}
+        
+    </div>
+{% endblock %}

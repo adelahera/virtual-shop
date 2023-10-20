@@ -6,6 +6,18 @@ from pymongo import MongoClient
 def index(request):
     return render(request, "shop/index.html")
 
+def buscar(request):
+    context={
+        'busqueda': request.GET.get('busqueda', 'No items found')
+    }
+    return render(request, "shop/busqueda.html", context)
+
+def busq_cat(request, busqueda):
+    context={
+        'busqueda': busqueda
+    }
+    return render(request, "shop/busqueda.html", context)
+
 def consulta_1(request):
     consulta = consultas.electronics_between_100_and_200()
     return render(request, "shop/products_list.html", {"consulta":consulta})
