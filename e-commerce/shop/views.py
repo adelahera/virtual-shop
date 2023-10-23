@@ -2,21 +2,35 @@ from django.http import HttpResponse
 from . import consultas
 from django.shortcuts import render
 from pymongo import MongoClient
+import sys
+import re
+client = MongoClient('mongo', 27017)
 
 def index(request):
     return render(request, "shop/index.html")
 
 def buscar(request):
+
+    busqueda = request.GET.get('busqueda', 'No items found')
+    regex = re.compile(f".*{re.escape(busqueda)}.*", re.IGNORECASE)
+    p=client.tienda.productos.find({"title": regex})
+    productos=list(p)
     context={
-        'busqueda': request.GET.get('busqueda', 'No items found')
+        'busqueda' : busqueda,
+        'productos' : productos
     }
     return render(request, "shop/busqueda.html", context)
 
 def busq_cat(request, busqueda):
+
+    p = client.tienda.productos.find({"category": busqueda})
+    productos = list(p)
+
     context={
-        'busqueda': busqueda
+        'busqueda': busqueda,
+        'productos': productos
     }
-    return render(request, "shop/busqueda.html", context)
+    return render(request, "shop/categorias.html", context)
 
 def consulta_1(request):
     consulta = consultas.electronics_between_100_and_200()

@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('buscar', views.buscar, name='buscar'),
+    path('buscar/', views.buscar, name='buscar'),
     path('busq/<str:busqueda>', views.busq_cat, name='busq_cat'),
     path('consulta1/', views.consulta_1, name='consulta_1'),
     path('consulta2/', views.consulta_2, name='consulta_2'),
