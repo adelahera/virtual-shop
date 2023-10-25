@@ -1,18 +1,41 @@
-{% for producto in productos %}
+<style>
+  .image-container{
+    width: 200px; /* Ancho personalizado */
+    height: 250px; /* Alto personalizado */
+    user-select: none;
+  }
 
-<div class="card border-secondary mb-3" style="max-width: 540px;">
-  <div class="row g-0">
-    <div class="col-md-4">
-      <img src="..." class="img-fluid rounded-start" alt="...">
+  .image-container > img {
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+    object-fit:contain;
+    pointer-events: none;
+  }
+
+  .card-container {
+    width: 18rem; 
+    height: 30rem; 
+    transition: transform 0.2s, background-color 0.2s;
+    user-select: none;
+  }
+  .card-container:hover {
+    transform: translateY(-10px); 
+  }
+</style>
+
+{% load static %}
+<div class="d-flex flex-wrap overflow-auto my-5 gap-3 py-3"  style="align-items: start; justify-content: center;">
+  {% for producto in productos %}   
+  <div class="card mx-2 d-flex flex-column align-items-center justify-content-center card-container" style="width: 18rem;">
+    <div class="image-container">
+      <img src="{% static producto.image %}" class="card-img-top custom-image" alt="{{ producto.title }}">
     </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <h5 class="card-title">{{producto.title}}</h5>
-        <p class="card-text">{{producto.price}}€</p>
-        <p class="card-text"><small class="text-body-secondary">Rating: {{producto.rating.rate}}</small></p>
-      </div>
+    <div class="card-body text-center">
+      <h5 class="card-title">{{ producto.title }}</h5>
+      <p class="card-text">{{ producto.price }}€</p>
+      <p class="card-text"><small class="text-body-secondary">Rating: {{ producto.rating.rate }}</small></p>
     </div>
   </div>
-</div>      
-{% endfor %}
-
+  {% endfor %}
+</div>
