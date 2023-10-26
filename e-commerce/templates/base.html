@@ -37,15 +37,19 @@
               <li><a class="dropdown-item" href="{% url 'busq_cat' 'women\'s clothing' %}">Women's clothing</a></li>
             </ul>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'añadir' %}">Add product</a>
+          </li>
         </ul>
       </div>
       <form class="d-flex" role="search" action = "{% url 'buscar' %}" method="get">
         <input class="form-control me-2" type="search" name="busqueda" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
+
     </div>
   </nav>
-  <div class="container my-5 text-center" style="display:center; align-items: center; justify-content: center; ">
+  <div class="container my-5" style="display:center; align-items: center; justify-content: center; ">
     {% block content %}
 
     

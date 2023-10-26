@@ -1,10 +1,15 @@
 from django.http import HttpResponse
 from . import consultas
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from pymongo import MongoClient
 import sys
 import re
 import random
+import logging
+from .forms import ProductForm
+
+logger = logging.getLogger(__name__)
+
 client = MongoClient('mongo', 27017)
 
 def index(request):
@@ -22,6 +27,8 @@ def index(request):
     context = {
         'productos': productos
     }
+
+    logger.debug("Debug message")
     return render(request, "shop/index.html", context)
 
 def buscar(request):
@@ -54,26 +61,45 @@ def busq_cat(request, busqueda):
     }
     return render(request, "shop/categorias.html", context)
 
-def consulta_1(request):
-    consulta = consultas.electronics_between_100_and_200()
-    return render(request, "shop/products_list.html", {"consulta":consulta})
+def añadir(request):
+    form = ProductForm()
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            # data = form.cleaned_data
+            # client.tienda.productos.insert_one(data)
+            logger.debug(form.cleaned_data)
+            return redirect('index')
 
-def consulta_2(request):
-    consulta = consultas.products_containing_word_pocket()
-    return render(request, "shop/products_list.html", {"consulta":consulta})
+    else:
+        form = ProductForm()
 
-def consulta_3(request):
-    consulta = consultas.products_with_rating_above_4()
-    return render(request, "shop/products_list.html", {"consulta":consulta})
+    context={
+        'form': form,
+    }
 
-def consulta_4(request):
-    consulta = consultas.mens_clothing_sorted_by_rating()
-    return render(request, "shop/products_list.html", {"consulta":consulta})
+    return render(request, "shop/añadir.html", context)
 
-def consulta_5(request):
-    consulta = consultas.total_revenue()
-    return HttpResponse(consulta)
+# def consulta_1(request):
+#     consulta = consultas.electronics_between_100_and_200()
+#     return render(request, "shop/products_list.html", {"consulta":consulta})
 
-def consulta_6(request):
-    consulta = consultas.revenue_by_category()
-    return HttpResponse(consulta)
+# def consulta_2(request):
+#     consulta = consultas.products_containing_word_pocket()
+#     return render(request, "shop/products_list.html", {"consulta":consulta})
+
+# def consulta_3(request):
+#     consulta = consultas.products_with_rating_above_4()
+#     return render(request, "shop/products_list.html", {"consulta":consulta})
+
+# def consulta_4(request):
+#     consulta = consultas.mens_clothing_sorted_by_rating()
+#     return render(request, "shop/products_list.html", {"consulta":consulta})
+
+# def consulta_5(request):
+#     consulta = consultas.total_revenue()
+#     return HttpResponse(consulta)
+
+# def consulta_6(request):
+#     consulta = consultas.revenue_by_category()
+#     return HttpResponse(consulta)
