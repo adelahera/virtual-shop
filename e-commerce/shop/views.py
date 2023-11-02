@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from . import consultas
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from pymongo import MongoClient
 import sys
 import re
@@ -69,6 +70,7 @@ def añadir(request):
             # data = form.cleaned_data
             # client.tienda.productos.insert_one(data)
             logger.debug(form.cleaned_data)
+            messages.success(request, 'Product added successfully')
             return redirect('index')
 
     else:

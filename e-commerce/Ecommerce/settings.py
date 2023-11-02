@@ -12,10 +12,15 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import sys
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# BOOTSTRAP5_FOLDER = os.path.abspath(os.path.join(BASE_DIR, "..", "django_bootstrap5"))
+# if BOOTSTRAP5_FOLDER not in sys.path:
+#     sys.path.insert(0, BOOTSTRAP5_FOLDER)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -30,6 +35,12 @@ ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
 
 # Application definition
 
+# BOOTSTRAP5 = {
+#     "error_css_class": "django_bootstrap5-error",
+#     "required_css_class": "django_bootstrap5-required",
+#     "javascript_in_head": True,
+# }
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,7 +49,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'shop.apps.ShopConfig',
+    # 'django_bootstrap5',
 ]
+
+MESSAGE_TAGS = {
+        messages.DEBUG: 'alert alert-secondary',
+        messages.INFO: 'alert alert-info',
+        messages.SUCCESS: 'alert alert-success',
+        messages.WARNING: 'alert alert-warning',
+        messages.ERROR: 'alert alert-danger',
+ }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

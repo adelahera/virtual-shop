@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="container my-5" style="display: flex; flex-direction: column; align-items: center;">
-  <form action="{% url 'añadir' %}" method="post" enctype="multipart/form-data" style="max-width: 400px;">
+  <form action="/shop/add/" method="post" enctype="multipart/form-data" style="max-width: 400px;">
     {% csrf_token %}
     <input type="hidden">
 
@@ -34,7 +34,7 @@
 
     <button class = "btn btn-primary btn-sm" type="submit" >Add</button>
   </form>
+
 </div>
+
 {% endblock %}
-
-
