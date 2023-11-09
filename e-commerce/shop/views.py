@@ -10,22 +10,18 @@ import logging
 from .forms import ProductForm
 from . import Seed
 
-logger = logging.getLogger(__name__)
+client = Seed.BaseDatos()
 
-client = MongoClient('mongo', 27017)
+logger = logging.getLogger(__name__)
 
 def index(request):
 
-    p=client.tienda.productos.find()
+    p=client.productos.find()
     prods=list(p)
     if len(prods) >= 3:
         productos = random.sample(prods, 3)
     else:
         productos = random.sample(prods, len(prods))
-
-    for prod in productos:
-        if prod.get('image') is not None:
-            prod['image'] = prod.get('image').replace('https://fakestoreapi.com/img/','')
 
     context = {
         'productos': productos
@@ -37,12 +33,8 @@ def buscar(request):
 
     busqueda = request.GET.get('busqueda', 'No items found')
     regex = re.compile(f".*{re.escape(busqueda)}.*", re.IGNORECASE)
-    p=client.tienda.productos.find({"title": regex})
+    p=client.productos.find({"title": regex})
     productos=list(p)
-
-    for prod in productos:
-        if prod.get('image') is not None:  
-            prod['image'] = prod.get('image').replace('https://fakestoreapi.com/img/','')
 
     context={
         'busqueda' : busqueda,
@@ -52,12 +44,8 @@ def buscar(request):
 
 def busq_cat(request, busqueda):
 
-    p = client.tienda.productos.find({"category": busqueda})
-    productos = list(p)
-    
-    for prod in productos:
-        if prod.get('image') is not None:
-            prod['image'] = prod.get('image').replace('https://fakestoreapi.com/img/','')    
+    p = client.productos.find({"category": busqueda})
+    productos = list(p) 
 
     context={
         'busqueda': busqueda,

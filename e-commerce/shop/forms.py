@@ -9,11 +9,12 @@ def validate_first_letter_uppercase(value):
 class ProductForm(forms.Form):
 
     CATEGORY_CHOICES = [
-    ("Men's clothing", "Men's clothing"),
-    ("Women's clothing", "Women's clothing"),
-    ('Jewelery', 'Jewelery'),
-    ('Electronics', 'Electronics'),
-]
+        ('electronics', 'Electronics'),
+        ('jewelery', 'Jewelery'),
+        ('men\'s clothing', 'Men\'s clothing'),
+        ('women\'s clothing', 'Women\'s clothing')
+    ]
+
     title = forms.CharField(label='Name', max_length=100, validators=[validate_first_letter_uppercase])
     description = forms.CharField(widget=forms.Textarea, label='Description', max_length=100)
     price = forms.FloatField(label='Price')    
