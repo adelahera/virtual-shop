@@ -2,44 +2,43 @@
 
 {% block content %}
 
-<div class="container my-5" style="display: flex; flex-direction: column; align-items: center;">
-  <form action="/shop/add/" method="post" enctype="multipart/form-data" style="max-width: 400px;">
-    {% csrf_token %}
-    <input type="hidden">
+<div>
+  <div class="container my-5" style="display: flex; flex-direction: column; align-items: center;">
+    <form action="/shop/add/" method="post" enctype="multipart/form-data" style="max-width: 400px;">
+      {% csrf_token %}
+      <input type="hidden">
 
-    <div style="margin-bottom: 20px;">
-      <label for="id_title">Name:</label>
-      <input type="text" name="title" maxlength="100" required id="id_title" style="width: 100%;">
-    </div>
+      <div style="margin-bottom: 20px;">
+        <label for="id_title">Name:</label>
+        <input type="text" name="title" maxlength="100" required id="id_title" style="width: 100%;">
+      </div>
 
-    <div style="margin-bottom: 20px;">
-      <label for="id_description">Description:</label>
-      <textarea name="description" cols="40" rows="10" maxlength="100" required id="id_description" style="width: 100%;"></textarea>
-    </div>
+      <div style="margin-bottom: 20px;">
+        <label for="id_description">Description:</label>
+        <textarea name="description" cols="40" rows="10" maxlength="100" required id="id_description" style="width: 100%;"></textarea>
+      </div>
 
-    <div style="margin-bottom: 20px;">
-      <label for="id_price">Price:</label>
-      <input type="number" name="price" step="any" required id="id_price" style="width: 100%;">
-    </div>
+      <div style="margin-bottom: 20px;">
+        <label for="id_price">Price:</label>
+        <input type="number" name="price" step="any" required id="id_price" style="width: 100%;">
+      </div>
 
-    <div style="margin-bottom: 20px;">
-      <label for="id_category">Category:</label>
-      <select name="category" id="id_category">
-        <option value="Men&#x27;s clothing">Men&#x27;s clothing</option>
-        <option value="Women&#x27;s clothing">Women&#x27;s clothing</option>
-        <option value="Jewelery">Jewelery</option>
-        <option value="Electronics">Electronics</option>
-      </select>
-    </div>
+      <div style="margin-bottom: 20px;">
+        <label for="id_category">Category:</label>
+        {{ form.category }}
+      </div>
 
-    <div style="margin-bottom: 20px;">
-      <label for="id_image">Image:</label>
-      <input type="file" name="image" accept="image/*" id="id_image" style="width: 100%;">
-    </div>
+      <div style="margin-bottom: 20px;">
+        <label for="id_image">Image:</label>
+        <input type="file" name="image" accept="image/*" id="id_image" style="width: 100%;">
+      </div>
 
-    <button class = "btn btn-primary btn-sm" type="submit" >Add</button>
-  </form>
+      <button class = "btn btn-primary btn-sm" type="submit" >Add</button>
+    </form>
+
+  </div>
 
 </div>
+
 
 {% endblock %}
