@@ -15,16 +15,11 @@ def getFromApi(api):
 	response = requests.get(api)
 	return response.json()
 
-# limpia la base de datos
-def cleanDB():
-	productos_collection.delete_many({})
-	compras_collection.delete_many({})
-
 # descargar imagenes a partir de una url 
 def downloadImage(url, filename):
 	# comprueba si la imagen esta ya descargada
 	if os.path.exists(filename):
-		print("Imagen ya descargada")
+		# print("Imagen ya descargada")
 		return 
 	
 	# crea el directorio imagenes si no existe
@@ -65,54 +60,52 @@ class Compra(BaseModel):
 	date: datetime
 	products: list[Ticket]
 
-# Conexión a la BD	
-client = MongoClient('mongo', 27017)
+class BaseDatos():
 
-# Base de Datos
-tienda_db = client.tienda                	
-productos = getFromApi('https://fakestoreapi.com/products')
-compras = getFromApi('https://fakestoreapi.com/carts')
-usuarios = getFromApi('https://fakestoreapi.com/users')
+	def __init__(self):
+		self.client = MongoClient('mongo', 27017)
+		self.tienda = self.client.tienda
+		self.productos = self.tienda.productos
+		self.compras_collection = self.tienda.compras
 
-# Elimina el id del producto en el json y validacion de los productos
-for prod in productos:
-	url = prod.get('image')
-	nombre_imagen = url.replace('https://fakestoreapi.com/img/','')
-	ruta_archivo = directorio_imgs + '/' + nombre_imagen
-	if url is not None:
-		downloadImage(url, ruta_archivo)
-	prod.pop('id')
-	prod['image'] = nombre_imagen
+	def cleanDB():
+		productos.delete_many({})
+		compras_collection.delete_many({})
 
-productos_collection = tienda_db.productos  # Colección
-compras_collection = tienda_db.compras  # Colección
+	def addProducts(self):
+		productos = getFromApi('https://fakestoreapi.com/products')
+		for prod in productos:
+			url = prod.get('image')
+			nombre_imagen = url.replace('https://fakestoreapi.com/img/','')
+			ruta_archivo = directorio_imgs + '/' + nombre_imagen
+			if url is not None:
+				downloadImage(url, ruta_archivo)
+			prod.pop('id')
+			prod['image'] = nombre_imagen
 
-# Limpia la base de datos para evitar duplicados
-cleanDB()
+		# Insertar todos los productos
+		self.productos.insert_many(productos)
 
-# Insertar todos los productos
-productos_collection.insert_many(productos)
+	def addPurchases(self):	
+		compras = getFromApi('https://fakestoreapi.com/carts')
+		usuarios = getFromApi('https://fakestoreapi.com/users')
+		# Guardar los ids de los productos en una lista
+		lista_ids_productos = []
+		for prod in productos.find():
+			lista_ids_productos.append(prod.get('_id'))
 
-# Guardar los ids de los productos en una lista
-lista_ids_productos = []
-for prod in productos_collection.find():
-	lista_ids_productos.append(prod.get('_id'))
+		# Añadir el email del usuario y eliminar los ids de usuario y compra
+		for c in compras:
+			email_usuario = usuarios[c.get('userId') - 1].get('email')
+			c['email'] = email_usuario
+			c.pop('userId')
+			c.pop('id')
+			for p in c.get('products'):
+				p['_id'] = lista_ids_productos[p.get('productId') - 1]
+				p.pop('productId')
 
-
-# Añadir el email del usuario y eliminar los ids de usuario y compra
-for c in compras:
-	email_usuario = usuarios[c.get('userId') - 1].get('email')
-	c['email'] = email_usuario
-	c.pop('userId')
-	c.pop('id')
-	for p in c.get('products'):
-		p['_id'] = lista_ids_productos[p.get('productId') - 1]
-		p.pop('productId')
-
-# Insertar todos los productos y compras
-compras_collection.insert_many(compras)
-
-	
+		# Insertar todos los productos y compras
+		self.compras_collection.insert_many(compras)
 
 # if __name__ == "__main__":
 #     queries.realizar_consultas()
