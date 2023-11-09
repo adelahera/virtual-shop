@@ -8,7 +8,7 @@ import os
 import queries
 
 # Directorio para las imágenes
-directorio_imgs = "/e-commerce/imagenes"
+directorio_imgs = "../static/imagenes"
 
 # https://requests.readthedocs.io/en/latest/
 def getFromApi(api):
@@ -45,7 +45,7 @@ class Nota(BaseModel):
 				
 class Producto(BaseModel):
 	_id: Any
-	name: str
+	title: str
 	price: float
 	description: str
 	category: str
@@ -53,7 +53,7 @@ class Producto(BaseModel):
 	rating: Nota
 
 	# Incluye validación para el nombre que debe empezar por mayúscula
-	@field_validator('name')
+	@field_validator('title')
 	def validate_name(cls, value):
 		if not value[0].isupper():
 			raise ValueError('El nombre debe empezar por mayúscula')
@@ -74,9 +74,15 @@ productos = getFromApi('https://fakestoreapi.com/products')
 compras = getFromApi('https://fakestoreapi.com/carts')
 usuarios = getFromApi('https://fakestoreapi.com/users')
 
-# Elimina el id del producto en el json
+# Elimina el id del producto en el json y validacion de los productos
 for prod in productos:
+	url = prod.get('image')
+	nombre_imagen = url.replace('https://fakestoreapi.com/img/','')
+	ruta_archivo = directorio_imgs + '/' + nombre_imagen
+	if url is not None:
+		downloadImage(url, ruta_archivo)
 	prod.pop('id')
+	prod['image'] = nombre_imagen
 
 productos_collection = tienda_db.productos  # Colección
 compras_collection = tienda_db.compras  # Colección
@@ -92,6 +98,7 @@ lista_ids_productos = []
 for prod in productos_collection.find():
 	lista_ids_productos.append(prod.get('_id'))
 
+
 # Añadir el email del usuario y eliminar los ids de usuario y compra
 for c in compras:
 	email_usuario = usuarios[c.get('userId') - 1].get('email')
@@ -105,13 +112,7 @@ for c in compras:
 # Insertar todos los productos y compras
 compras_collection.insert_many(compras)
 
-# Descargar las imagenes de los productos en la carpeta imagenes
-for prod in productos_collection.find():
-	url = prod.get('image')
-	nombre_imagen = url.replace('https://fakestoreapi.com/img/','')
-	ruta_archivo = directorio_imgs + '/' + nombre_imagen
-	if url is not None:
-		downloadImage(url, ruta_archivo)	
+	
 
-if __name__ == "__main__":
-    queries.realizar_consultas()
+# if __name__ == "__main__":
+#     queries.realizar_consultas()

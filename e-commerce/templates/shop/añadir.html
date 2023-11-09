@@ -8,8 +8,8 @@
     <input type="hidden">
 
     <div style="margin-bottom: 20px;">
-      <label for="id_name">Name:</label>
-      <input type="text" name="name" maxlength="100" required id="id_name" style="width: 100%;">
+      <label for="id_title">Name:</label>
+      <input type="text" name="title" maxlength="100" required id="id_title" style="width: 100%;">
     </div>
 
     <div style="margin-bottom: 20px;">
@@ -24,7 +24,12 @@
 
     <div style="margin-bottom: 20px;">
       <label for="id_category">Category:</label>
-      <input type="text" name="category" maxlength="100" required id="id_category" style="width: 100%;">
+      <select name="category" id="id_category">
+        <option value="Men&#x27;s clothing">Men&#x27;s clothing</option>
+        <option value="Women&#x27;s clothing">Women&#x27;s clothing</option>
+        <option value="Jewelery">Jewelery</option>
+        <option value="Electronics">Electronics</option>
+      </select>
     </div>
 
     <div style="margin-bottom: 20px;">

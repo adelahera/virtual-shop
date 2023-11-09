@@ -8,6 +8,7 @@ import re
 import random
 import logging
 from .forms import ProductForm
+from . import Seed
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +24,13 @@ def index(request):
         productos = random.sample(prods, len(prods))
 
     for prod in productos:
-        prod['image'] = prod.get('image').replace('https://fakestoreapi.com/img/','')
+        if prod.get('image') is not None:
+            prod['image'] = prod.get('image').replace('https://fakestoreapi.com/img/','')
 
     context = {
         'productos': productos
     }
 
-    logger.debug("Debug message")
     return render(request, "shop/index.html", context)
 
 def buscar(request):
@@ -40,7 +41,8 @@ def buscar(request):
     productos=list(p)
 
     for prod in productos:
-        prod['image'] = prod.get('image').replace('https://fakestoreapi.com/img/','')
+        if prod.get('image') is not None:  
+            prod['image'] = prod.get('image').replace('https://fakestoreapi.com/img/','')
 
     context={
         'busqueda' : busqueda,
@@ -52,9 +54,10 @@ def busq_cat(request, busqueda):
 
     p = client.tienda.productos.find({"category": busqueda})
     productos = list(p)
-
+    
     for prod in productos:
-        prod['image'] = prod.get('image').replace('https://fakestoreapi.com/img/','')    
+        if prod.get('image') is not None:
+            prod['image'] = prod.get('image').replace('https://fakestoreapi.com/img/','')    
 
     context={
         'busqueda': busqueda,
@@ -63,15 +66,28 @@ def busq_cat(request, busqueda):
     return render(request, "shop/categorias.html", context)
 
 def añadir(request):
-    form = ProductForm()
     if request.method == 'POST':
         form = ProductForm(request.POST)
-        if form.is_valid():
-            # data = form.cleaned_data
-            # client.tienda.productos.insert_one(data)
-            logger.debug(form.cleaned_data)
+        logger.info("Form is POST")
+        if form.is_valid():            
+            logger.info("Form is valid")
+            data = form.cleaned_data
+            if 'image' in request.FILES:
+                imagen = request.FILES['image']
+                with open(f'static/imagenes/{imagen.name}', 'wb+') as destination:
+                    for chunk in imagen.chunks():
+                        destination.write(chunk)
+                # guarda la ruta de la imagen en el campo image del form
+                data['image'] = imagen.name
+
+            logger.debug(data)
+            client.tienda.productos.insert_one(data)
             messages.success(request, 'Product added successfully')
             return redirect('index')
+        else:
+            logger.info("Form is not valid")
+            logger.error(form.errors)
+            messages.error(request, 'Error adding product')
 
     else:
         form = ProductForm()
