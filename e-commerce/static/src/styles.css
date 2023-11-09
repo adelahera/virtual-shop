@@ -1,0 +1,41 @@
+.navbar {
+
+    background-color: #1b4e50;
+}
+
+.navbar-nav .nav-link{
+    color: #fff !important;
+}
+
+.navbar-brand {
+    color: #fff !important;
+}
+
+#body {
+    background-color: #ecf8f8;
+}
+
+.image-container{
+    width: 200px; /* Ancho personalizado */
+    height: 250px; /* Alto personalizado */
+    user-select: none;
+}
+
+.image-container > img {
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+    object-fit:contain;
+    pointer-events: none;
+}
+
+.card-container {
+    width: 18rem; 
+    height: 30rem; 
+    transition: transform 0.2s, background-color 0.2s;
+    user-select: none;
+}
+.card-container:hover {
+    transform: translateY(-10px); 
+}
+
