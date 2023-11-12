@@ -6,6 +6,7 @@ urlpatterns = [
     path('buscar/', views.buscar, name='buscar'),
     path('busq/<str:busqueda>', views.busq_cat, name='busq_cat'),
     path('add/', views.añadir, name='añadir'),
+    path('salir/', views.salir, name='salir'),
     # path('consulta1/', views.consulta_1, name='consulta_1'),
     # path('consulta2/', views.consulta_2, name='consulta_2'),
     # path('consulta3/', views.consulta_3, name='consulta_3'),

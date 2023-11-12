@@ -2,6 +2,9 @@ from django.http import HttpResponse
 from . import consultas
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.contrib.auth.views import LoginView
 from pymongo import MongoClient
 import sys
 import re
@@ -53,6 +56,7 @@ def busq_cat(request, busqueda):
     }
     return render(request, "shop/categorias.html", context)
 
+@login_required
 def añadir(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
@@ -85,6 +89,12 @@ def añadir(request):
     }
 
     return render(request, "shop/añadir.html", context)
+
+def salir(request):
+    logout(request)
+    logger.info("User logged out")
+    messages.success(request, 'Logged out successfully')
+    return redirect('index')
 
 # def consulta_1(request):
 #     consulta = consultas.electronics_between_100_and_200()

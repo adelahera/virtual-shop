@@ -1,6 +1,54 @@
-<h2>Log In</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Log In</button>
-</form>
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<style>
+
+  .login-first-container {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+  }
+  .login-container {
+    width: 20rem; 
+    height: 25rem; 
+    transition: transform 0.2s, background-color 0.2s;
+    user-select: none;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    background-color: #BBD6E8;    
+  }
+  .login-container:hover {
+    background-color: #a5c7dd;
+  }
+  .login-container form {
+    display: flex;
+    flex-direction: column;
+  }
+</style>
+
+<div class="login-first-container">
+  <div class="login-container">
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="exampleInputUsername" class="form-label">Username</label>
+            <input type="text" class="form-control" id="exampleInputUsername" name="username" aria-describedby="usernameHelp">
+            <div id="usernameHelp" class="form-text">We will never share your credentials with anyone else.</div>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" name="password">
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1" name="remember_me">
+            <label class="form-check-label" for="exampleCheck1">Remember me</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Log in</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
