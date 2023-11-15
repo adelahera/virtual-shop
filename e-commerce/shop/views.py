@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
+from django.contrib.admin.views.decorators import staff_member_required
 from pymongo import MongoClient
 import sys
 import re
@@ -56,7 +57,7 @@ def busq_cat(request, busqueda):
     }
     return render(request, "shop/categorias.html", context)
 
-@login_required
+@staff_member_required
 def añadir(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
