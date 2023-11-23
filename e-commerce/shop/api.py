@@ -2,8 +2,17 @@ from ninja_extra import NinjaExtraAPI, api_controller, http_get
 from ninja import Schema
 from bson.objectid import ObjectId
 from . import Seed
+from typing import List
+from ninja.security import django_auth
+from ninja.security import HttpBearer
 
-api = NinjaExtraAPI()
+
+class GlobalAuth(HttpBearer):
+    def authenticate(self, request, token):
+        if token == "supersecret":
+            return token
+
+api = NinjaExtraAPI(auth=GlobalAuth())
 	
 class Rate(Schema):
 	rate: float
@@ -46,6 +55,18 @@ def modify_product(request, id: str, payload: ProductSchemaIn):
             data = client.productos.update_one({"_id": ObjectId(id)}, {"$set": {attr: value}})
         data['id'] = str(data['_id'])
         del data['_id']
+        return 202, data
+    except:
+        return 404, {'message': 'no encontrado'}
+
+@api.get("/productos", tags=['TIENDA DAI'], response={202: List[ProductSchema], 404: ErrorSchema})
+def get_products(request, offset: int = 0, limit: int = 10):
+    try:
+        client = Seed.BaseDatos()
+        data = list(client.productos.find({}).skip(offset).limit(offset+limit))
+        for prod in data:
+            prod['id'] = str(prod['_id'])
+            del prod['_id']
         return 202, data
     except:
         return 404, {'message': 'no encontrado'}
