@@ -59,7 +59,7 @@ def modify_product(request, id: str, payload: ProductSchemaIn):
     except:
         return 404, {'message': 'no encontrado'}
 
-@api.get("/productos", tags=['TIENDA DAI'], response={202: List[ProductSchema], 404: ErrorSchema})
+@api.get("/productos", auth=None,tags=['TIENDA DAI'], response={202: List[ProductSchema], 404: ErrorSchema})
 def get_products(request, offset: int = 0, limit: int = 10):
     try:
         client = Seed.BaseDatos()
@@ -71,7 +71,7 @@ def get_products(request, offset: int = 0, limit: int = 10):
     except:
         return 404, {'message': 'no encontrado'}
 
-@api.get("/productos/{id}", tags=['TIENDA DAI'], response={202: ProductSchema, 404: ErrorSchema})
+@api.get("/productos/{id}", auth=None,tags=['TIENDA DAI'], response={202: ProductSchema, 404: ErrorSchema})
 def get_product(request, id: str):
     try:
         data = busca_prod(id)
