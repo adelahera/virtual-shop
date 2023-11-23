@@ -43,7 +43,9 @@ def modify_product(request, id: str, payload: ProductSchemaIn):
         data = busca_prod(id)
         client = Seed.BaseDatos()
         for attr, value in payload.dict().items():
-            client.productos.update_one({"_id": ObjectId(id)}, {"$set": {attr: value}})
+            data = client.productos.update_one({"_id": ObjectId(id)}, {"$set": {attr: value}})
+        data['id'] = str(data['_id'])
+        del data['_id']
         return 202, data
     except:
         return 404, {'message': 'no encontrado'}
@@ -52,22 +54,26 @@ def modify_product(request, id: str, payload: ProductSchemaIn):
 def get_product(request, id: str):
     try:
         data = busca_prod(id)
+        data['id'] = str(data['_id'])
+        del data['_id']
         return 202, data
     except:
         return 404, {'message': 'no encontrado'}
 
-@api.delete("/productos/{id}", tags=['TIENDA DAI'], response={202: ProductSchema, 404: ErrorSchema})
+@api.delete("/productos/{id}", tags=['TIENDA DAI'], response={204: None, 404: ErrorSchema})
 def delete_product(request, id: str):
     try:
-        data = busca_prod(id)
         client = Seed.BaseDatos()
         client.productos.delete_one({"_id": ObjectId(id)})
-        return 202, data
+        return 204, None
     except:
         return 404, {'message': 'no encontrado'}
 
 @api.post("/productos", tags=['TIENDA DAI'], response={202: ProductSchema, 404: ErrorSchema})
 def add_product(request, payload: ProductSchemaIn):
     client = Seed.BaseDatos()
-    client.productos.insert_one(payload.dict())
-    return 202, payload.dict()
+    insert = payload.dict()
+    client.productos.insert_one(insert)
+    insert['id'] = str(insert['_id'])
+    del insert['_id']
+    return 202, insert
