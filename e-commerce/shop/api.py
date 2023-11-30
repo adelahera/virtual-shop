@@ -60,12 +60,12 @@ def get_product(request, id: str):
     except:
         return 404, {'message': 'no encontrado'}
 
-@api.delete("/productos/{id}", tags=['TIENDA DAI'], response={204: None, 404: ErrorSchema})
+@api.delete("/productos/{id}", tags=['TIENDA DAI'], response={200: None, 404: ErrorSchema})
 def delete_product(request, id: str):
     try:
         client = Seed.BaseDatos()
         client.productos.delete_one({"_id": ObjectId(id)})
-        return 204, None
+        return 200, None
     except:
         return 404, {'message': 'no encontrado'}
 

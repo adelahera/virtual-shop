@@ -27,6 +27,10 @@ def index(request):
     else:
         productos = random.sample(prods, len(prods))
 
+    for prod in productos:
+        prod['id'] = str(prod['_id'])
+        del prod['_id']
+        
     context = {
         'productos': productos
     }
@@ -40,6 +44,10 @@ def buscar(request):
     p=client.productos.find({"title": regex})
     productos=list(p)
 
+    for prod in productos:
+        prod['id'] = str(prod['_id'])
+        del prod['_id']
+
     context={
         'busqueda' : busqueda,
         'productos' : productos,
@@ -50,6 +58,10 @@ def busq_cat(request, busqueda):
 
     p = client.productos.find({"category": busqueda})
     productos = list(p) 
+
+    for prod in productos:
+        prod['id'] = str(prod['_id'])
+        del prod['_id']
 
     context={
         'busqueda': busqueda,

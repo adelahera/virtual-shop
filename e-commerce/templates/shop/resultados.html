@@ -1,6 +1,9 @@
 {% load static %}
 
+
 <link rel="stylesheet" href="{% static 'styles.css' %}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <div class="d-flex flex-wrap overflow-auto my-5 gap-3 py-3"  style="align-items: start; justify-content: center;">
   {% for producto in productos %}   
   <div class="card mx-2 d-flex flex-column align-items-center justify-content-center card-container" style="width: 18rem;">
@@ -10,8 +13,12 @@
     <div class="card-body text-center">
       <h5 class="card-title">{{ producto.title }}</h5>
       <p class="card-text">{{ producto.price }}€</p>
-      <p class="card-text"><small class="text-body-secondary">Rating: {{ producto.rating.rate }}</small></p>
+      <span class="sp" title="{{ producto.id }}"></span>
+      <p class="card-text"><small class="text-body-secondary">{{ producto.rating.rate }}</small></p>
+
     </div>
   </div>
   {% endfor %}
 </div>
+
+<script type="text/javascript" src="{% static 'stars.js' %}"></script>
