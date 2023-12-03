@@ -68,9 +68,9 @@ class BaseDatos():
 		self.productos = self.tienda.productos
 		self.compras_collection = self.tienda.compras
 
-	def cleanDB():
-		productos.delete_many({})
-		compras_collection.delete_many({})
+	def cleanDB(self):
+		self.productos.delete_many({})
+		self.compras_collection.delete_many({})
 
 	def addProducts(self):
 		productos = getFromApi('https://fakestoreapi.com/products')
@@ -91,7 +91,7 @@ class BaseDatos():
 		usuarios = getFromApi('https://fakestoreapi.com/users')
 		# Guardar los ids de los productos en una lista
 		lista_ids_productos = []
-		for prod in productos.find():
+		for prod in self.productos.find():
 			lista_ids_productos.append(prod.get('_id'))
 
 		# Añadir el email del usuario y eliminar los ids de usuario y compra
