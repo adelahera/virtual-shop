@@ -2,12 +2,10 @@ function rate(element) {
     console.log(element.title);
 
     fetch(`/shop/api/productos/${element.title}`)
+        .then(res => res.json())
         .then(res => {
-            console.log(res); // Imprime la respuesta en la consola
-            return res.json();
-        })
-        .then(res => {
-            const prod_rating = Math.floor(res.rating.rate);
+            const prod_rating = res.rating ? Math.floor(res.rating.rate) : 0;
+
             let starsHTML = '';
             for (let i = 0; i < 5; i++) {
                 if (i < prod_rating) {
