@@ -38,11 +38,3 @@
 .card-container:hover {
     transform: translateY(-10px); 
 }
-
-.checked {
-    color: gold; /* Color para estrellas marcadas */
-}
-
-.sp span:not(.checked) {
-    color: silver;
-}
