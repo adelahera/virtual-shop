@@ -16,8 +16,8 @@
 }
 
 .image-container{
-    width: 200px; /* Ancho personalizado */
-    height: 250px; /* Alto personalizado */
+    width: 200px; 
+    height: 250px; 
     user-select: none;
 }
 
@@ -37,4 +37,21 @@
 }
 .card-container:hover {
     transform: translateY(-10px); 
+}
+
+.card-text {
+    margin-bottom: 5px; 
+}
+
+.fa-star {
+    color: gray; 
+    transition: color 0.3s ease; 
+}
+
+.checked, .fa-star:hover {
+    color: gold; 
+}
+
+.fa-star:hover ~ .fa-star {
+    color: gray; 
 }

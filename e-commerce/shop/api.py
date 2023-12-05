@@ -49,15 +49,20 @@ def busca_prod(id):
 @api.put("/productos/{id}", tags=['TIENDA DAI'], response={202: ProductSchema, 404: ErrorSchema})
 def modify_product(request, id: str, payload: ProductSchemaIn):
     try:
-        data = busca_prod(id)
         client = Seed.BaseDatos()
-        for attr, value in payload.dict().items():
-            data = client.productos.update_one({"_id": ObjectId(id)}, {"$set": {attr: value}})
-        data['id'] = str(data['_id'])
-        del data['_id']
-        return 202, data
-    except:
-        return 404, {'message': 'no encontrado'}
+        data = busca_prod(id)
+        update_result = client.productos.update_one({"_id": ObjectId(id)}, {"$set": payload.dict()})
+
+        if update_result.modified_count == 0:
+            raise Exception(f'No existe el producto con id {id}')
+
+        updated_data = client.productos.find_one({"_id": ObjectId(id)})
+        updated_data['id'] = str(updated_data['_id'])
+        del updated_data['_id']
+        
+        return 202, updated_data
+    except Exception as e:
+        return 404, {'message': str(e)}
 
 @api.get("/productos", auth=None,tags=['TIENDA DAI'], response={202: List[ProductSchema], 404: ErrorSchema})
 def get_products(request, offset: int = 0, limit: int = 10):
