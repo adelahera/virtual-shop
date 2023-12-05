@@ -35,6 +35,7 @@ function sendRating(element, userIsAuthenticated) {
 
                 const prod_count = productData.rating ? productData.rating.count : 0;
                 const newCount = parseInt(prod_count) + 1;
+                const oldRate = productData.rating ? productData.rating.rate : 0;
 
                 stars.forEach(star => {
                     star.addEventListener('click', () => {
@@ -54,7 +55,7 @@ function sendRating(element, userIsAuthenticated) {
                                 description: productData.description,
                                 category: productData.category,
                                 rating: {  
-                                    rate: clickedRating,
+                                    rate: (clickedRating + oldRate) / 2,
                                     count: newCount,
                                 },
                             }),

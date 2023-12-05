@@ -17,7 +17,7 @@
         <span class="sp" title="{{ producto.id }}" onclick="sendRating(event, true)"> </span> 
         {% else %}
         <span class="sp" title="{{ producto.id }}" onclick="alert('You must be logged in to rate a product')"> </span>        {% endif %}
-        <small class="text-body-secondary" id="{{ producto.id }}">{{ producto.rating.rate }}</small>
+        <small class="text-body-secondary" id="{{ producto.id }}"> {{ producto.rating.rate|stringformat:".1f" }} </small>      
       </p>
       <p class="card-text">
         <small class="text-body-secondary" id="{{ producto.id }}">{{ producto.rating.count }} ratings</small>
