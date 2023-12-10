@@ -19,9 +19,8 @@ function initStars(element) {
 }
 
 function sendRating(element, userIsAuthenticated) {
-
-    if(userIsAuthenticated == true){
-        const stars = element.target.parentNode.querySelectorAll('.fa-star');
+    if (userIsAuthenticated == true) {
+        const star = element.target.parentNode.querySelectorAll('.fa-star');
 
         fetch(`/shop/api/productos/${element.target.parentNode.title}`)
             .then(response => {
@@ -37,51 +36,46 @@ function sendRating(element, userIsAuthenticated) {
                 const newCount = parseInt(prod_count) + 1;
                 const oldRate = productData.rating ? productData.rating.rate : 0;
 
-                stars.forEach(star => {
-                    star.addEventListener('click', () => {
-                        const clickedRating = parseFloat(star.getAttribute('data-rating'));
-                        console.log(`Valoración enviada: ${clickedRating}`);
-                        console.log(`Numero de votos: ${prod_count}`);
+                const clickedRating = parseFloat(element.target.getAttribute('data-rating'));
+                console.log(`Valoración enviada: ${clickedRating}`);
+                console.log(`Numero de votos: ${prod_count}`);
 
-                        fetch(`/shop/api/productos/${productData.id}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + 'supersecret',
-                            },
-                            body: JSON.stringify({
-                                title: productData.title,
-                                price: productData.price,
-                                description: productData.description,
-                                category: productData.category,
-                                rating: {  
-                                    rate: (clickedRating + oldRate) / 2,
-                                    count: newCount,
-                                },
-                            }),
-                        })
-                        .then(ratingResponse => {
-                            if (!ratingResponse.ok) {
-                                throw new Error(`Error en la solicitud: ${ratingResponse.statusText}`);
-                            }
-                            return ratingResponse.json();
-                        })
-                        .then(updatedProduct => {
-                            console.log('Valoración enviada con éxito:', updatedProduct);
-                            console.log(`El producto ${element.title} tiene una valoración de ${updatedProduct.rating.rate} estrellas con un total de ${updatedProduct.rating.count} valoraciones.`);
-                            initStars(element.target.parentNode);
-                        })
-                        .catch(error => {
-                            alert(`Error al enviar la valoración: ${error.message}`);
-                        });
-                    });
+                fetch(`/shop/api/productos/${productData.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + 'supersecret',
+                    },
+                    body: JSON.stringify({
+                        title: productData.title,
+                        price: productData.price,
+                        description: productData.description,
+                        category: productData.category,
+                        rating: {
+                            rate: (clickedRating + oldRate) / 2,
+                            count: newCount,
+                        },
+                    }),
+                })
+                .then(ratingResponse => {
+                    if (!ratingResponse.ok) {
+                        throw new Error(`Error en la solicitud: ${ratingResponse.statusText}`);
+                    }
+                    return ratingResponse.json();
+                })
+                .then(updatedProduct => {
+                    console.log('Valoración enviada con éxito:', updatedProduct);
+                    console.log(`El producto ${element.title} tiene una valoración de ${updatedProduct.rating.rate} estrellas con un total de ${updatedProduct.rating.count} valoraciones.`);
+                    initStars(element.target.parentNode);
+                })
+                .catch(error => {
+                    alert(`Error al enviar la valoración: ${error.message}`);
                 });
             })
             .catch(error => {
                 alert(`${error}`);
             });
-    }
-    else{
+    } else {
         alert("You must be logged in to rate a product");
     }
 }
