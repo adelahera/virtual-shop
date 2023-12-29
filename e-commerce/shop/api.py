@@ -5,7 +5,8 @@ from . import Seed
 from typing import List
 from ninja.security import django_auth
 from ninja.security import HttpBearer
-
+import re
+import logging
 
 class GlobalAuth(HttpBearer):
     def authenticate(self, request, token):
@@ -35,7 +36,6 @@ class ProductSchemaIn(Schema):
 	category: str
 	rating: Rate
 	
-	
 class ErrorSchema(Schema):
 	message: str
 	
@@ -64,11 +64,36 @@ def modify_product(request, id: str, payload: ProductSchemaIn):
     except Exception as e:
         return 404, {'message': str(e)}
 
+@api.get("/products/category", auth=None,tags=['TIENDA DAI'], response={202: List[ProductSchema], 404: ErrorSchema})
+def get_by_category(request, search: str):
+    try:
+        client = Seed.BaseDatos()
+        data = list(client.productos.find({"category": search}))
+        for prod in data:
+            prod['id'] = str(prod['_id'])
+            del prod['_id']
+        return 202, data
+    except:
+        return 404, {'message': 'no encontrado'}    
+
 @api.get("/productos", auth=None,tags=['TIENDA DAI'], response={202: List[ProductSchema], 404: ErrorSchema})
 def get_products(request, offset: int = 0, limit: int = 10):
     try:
         client = Seed.BaseDatos()
         data = list(client.productos.find({}).skip(offset).limit(offset+limit))
+        for prod in data:
+            prod['id'] = str(prod['_id'])
+            del prod['_id']
+        return 202, data
+    except:
+        return 404, {'message': 'no encontrado'}
+
+@api.get("/products/search", auth=None,tags=['TIENDA DAI'], response={202: List[ProductSchema], 404: ErrorSchema})
+def search_by_name(request, search: str):
+    try:
+        client = Seed.BaseDatos()
+        regex_pattern = f".*{re.escape(search)}.*"
+        data = list(client.productos.find({"title": {"$regex": regex_pattern, "$options": "i"}}))
         for prod in data:
             prod['id'] = str(prod['_id'])
             del prod['_id']
