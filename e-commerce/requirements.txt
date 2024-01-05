@@ -7,4 +7,5 @@ email-validator==2.0
 typing-extensions==4.8
 django==4.2
 django-ninja-extra==0.20.0
+gunicorn==21.2.0
 # django-bootstrap5==23.3
