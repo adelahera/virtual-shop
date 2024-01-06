@@ -1,49 +1,22 @@
-# version: '3.7'
-
-# services:
-#   django_gunicorn:
-#     volumes:
-#       - ./e-commerce/static:/static
-#     build:
-#       context: .
-#     ports:
-#       - "8000:8000"
-#   nginx:
-#     build: ./nginx
-#     volumes:
-#       - ./e-commerce/static:/static
-#     ports:
-#       - "80:80"
-#     depends_on:
-#       - django_gunicorn
-#   mongo:
-#     image: mongo:6.0
-#     ports:
-#       - 27017:27017
-#     volumes:
-#       - ./data:/data/db
-# volumes:
-#   static:
-
-version: "3.7"
+version: '3.7'
 
 services:
   django_gunicorn:
     volumes:
-      - ./e-commerce/static:/static
+      - static:/e-commerce/static
     build:
       context: .
     ports:
       - "8000:8000"
+  
   nginx:
     build: ./nginx
     volumes:
-      - ./e-commerce/static:/static
+      - static:/e-commerce/static
     ports:
       - "80:80"
     depends_on:
       - django_gunicorn
-
   mongo:
     image: mongo:6.0
     ports:
