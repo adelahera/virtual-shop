@@ -3,7 +3,7 @@ version: '3.7'
 services:
   django_gunicorn:
     volumes:
-      - static:/e-commerce/static
+      - staticfiles:/app/staticfiles
     build:
       context: .
     ports:
@@ -12,11 +12,12 @@ services:
   nginx:
     build: ./nginx
     volumes:
-      - static:/e-commerce/static
+      - staticfiles:/staticfiles
     ports:
       - "80:80"
     depends_on:
       - django_gunicorn
+      
   mongo:
     image: mongo:6.0
     ports:
@@ -24,4 +25,4 @@ services:
     volumes:
       - ./data:/data/db
 volumes:
-  static:
+  staticfiles:
